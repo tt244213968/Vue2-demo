@@ -21,6 +21,7 @@
 </template>
 <script>
     // import myTable from './Table'
+
     import NProgress from 'nprogress'
     export default {
         data() {
@@ -31,24 +32,23 @@
             }
         },
         methods: {
-            showTable: function() {
-                // this.$refs.table.datas = ''
-                this.$refs.table.datas = this.datas
-                this.$refs.table.columns = this.columns
-                this.$refs.table.setTable()
-            },
+            // showTable: function() {
+            //     // this.$refs.table.datas = ''
+            //     this.$refs.table.datas = this.datas
+            //     this.$refs.table.columns = this.columns
+            //     this.$refs.table.setTable()
+            // },
 
 
             setTable: function() {
-
                 var _this = this
 
                 function operateFormatter(value, row, index) {
                     return [
-                        '<a class="historyprice" href="javascript:void(0)" title="历史售价">',
+                        '<a class="historyprice" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="历史售价">',
                         '<i class="fa fa-line-chart"></i>',
                         '</a>      ',
-                        '<a class="costanalysis" href="javascript:void(0)" title="成本明细">',
+                        '<a class="costanalysis" href="javascript:void(0)" data-toggle="tooltip" data-placement="top" title="成本明细">',
                         '<i class="fa fa-pie-chart"></i>',
                         '</a>'
                     ].join('');
@@ -65,13 +65,20 @@
                             async: true,
                             timeout: 60000,
                             data: {
+                                userid: localStorage.userid,
+                                token: localStorage.token,
                                 company: row.Company,
                                 itemno: row.ItemNo
                             },
                             success: function(res) {
+                                if (res.code == 0) {
+                                    $('#error').modal('show')
+                                    NProgress.done()
+                                } else {
+                                    NProgress.done()
+                                    _this.setlinechart(res.data)
+                                }
 
-                                NProgress.done()
-                                _this.setlinechart(res.data)
                             },
                             error: function(res) {
 
@@ -91,14 +98,21 @@
                             async: true,
                             timeout: 60000,
                             data: {
+                                userid: localStorage.userid,
+                                token: localStorage.token,
                                 company: row.Company,
                                 bomno: row.BomNo
                             },
                             success: function(res) {
+                                if (res.code == 0) {
+                                    $('#error').modal('show')
+                                    NProgress.done()
+                                } else {
+                                    NProgress.done()
+                                    _this.setpiechart(res.data)
+                                    _this.showcalculator(res.data)
+                                }
                                 // $('#loading').modal('hide')
-                                NProgress.done()
-                                _this.setpiechart(res.data)
-                                _this.showcalculator(res.data)
                             },
                             error: function(res) {
 
@@ -106,6 +120,7 @@
                         })
                     }
                 }
+
                 $(".table").bootstrapTable('destroy');
                 $('.table').bootstrapTable({
                     columns: [{

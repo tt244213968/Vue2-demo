@@ -20,42 +20,42 @@
            </div>
         </div>
       
-        <my-boxtable :title="boxtable.title" :showTable="showTable" ref="boxtable">
-        </my-boxtable>
+        <my-costtable :title="costtable.title" :showTable="showTable" ref="costtable">
+        </my-costtable>
        
               
            
-  <my-boxlinechart ref="boxlinechart">
-                </my-boxlinechart>
+  <my-costlinechart ref="costlinechart">
+                </my-costlinechart>
         <div class="row">
             
             <div class="col-md-6">
-                <my-boxpiechart ref="boxpiechart">
+                <my-costpiechart ref="costpiechart">
 
-                </my-boxpiechart>
+                </my-costpiechart>
             </div>
             <div class="col-md-6">
-                <my-boxcalculator ref="calculator">
+                <my-costcalculator ref="calculator">
 
-                </my-boxcalculator>
+                </my-costcalculator>
             </div>
         </div>
-                <my-boxbarchart :title="boxbarchart.title"  ref="boxbarchart">
+                <my-costbarchart :title="costbarchart.title"  ref="costbarchart">
                     
-                </my-boxbarchart>
+                </my-costbarchart>
 
         <my-modal v-for="(modal,index) in modals" :params="modal"></my-modal>
     </div>
 </template>
 <script>
     import NProgress from 'nprogress'
-    import myBoxtable from './Box_table'
-    import myBoxbarchart from './Box_barchart'
-    import myBoxlinechart from './Box_linechart'
-    import myBoxpiechart from './Box_piechart'
-    import myBoxcalculator from './Box_calculator'
+    import myCosttable from './Cost_table'
+    import myCostbarchart from './Cost_barchart'
+    import myCostlinechart from './Cost_linechart'
+    import myCostpiechart from './Cost_piechart'
+    import myCostcalculator from './Cost_calculator'
     import myModal from './Modal'
-    import '../assets/loading.gif'
+
     export default {
         data() {
             return {
@@ -72,13 +72,19 @@
                     html: '<p>输入框不能为空</p>',
                     header: true,
                     footer: false
+                }, {
+                    id: 'error',
+                    title: '提示',
+                    html: '<p>无权限</p>',
+                    header: true,
+                    footer: false
                 }],
                 showTable: true,
                 form_info: {
                     customer_name: '',
                     material_name: ''
                 },
-                boxtable: {
+                costtable: {
                     title: 'BOM列表',
                     columns: [{
                         field: 'Company',
@@ -119,7 +125,7 @@
                     }],
                     datas: ''
                 },
-                boxbarchart: {
+                costbarchart: {
                     id: 'barchart',
                     title: '价格柱状图',
                     params: {
@@ -169,7 +175,7 @@
         },
         methods: {
             showTable: function() {
-                console.log(this.$router.currentRoute.name)
+                // console.log(this.$router.currentRoute.name)
                 if (this.form_info.customer_name == '' || this.form_info.material_name == '') {
                     // this.showmodal('tip', 'show')
                     $('#tip').modal('show')
@@ -189,32 +195,41 @@
                         timeout: 60000,
                         data: {
                             customerkey: _this.form_info.customer_name,
-                            itemkey: _this.form_info.material_name
+                            itemkey: _this.form_info.material_name,
+                            userid: localStorage.userid,
+                            token: localStorage.token
                         },
                         crossDomain: true,
                         async: true,
                         success: function(response) {
-                            _this.btndisabled = false
-                            _this.reset()
-                            NProgress.done()
-                                // $('#loading').modal('hide')
-                                // _this.showmodal('loading', 'hide')
-                            for (var i = 0; i < response.datasingle.length; i++) {
-                                for (var j = 0; j < response.datasingle[i].length; j++) {
-                                    _this.boxbarchart.params.xAxis.data[i].push(response.datasingle[i][j].ProductName)
-                                    _this.boxbarchart.params.series[0].data[i].push(response.datasingle[i][j].PurCost)
-                                    _this.boxbarchart.params.series[1].data[i].push(response.datasingle[i][j].ListCost)
+                            if (response.code == 0) {
+                                $('#error').modal('show')
+                                NProgress.done()
+                                _this.btndisabled = false
+                            } else {
+
+                                _this.btndisabled = false
+                                _this.reset()
+                                NProgress.done()
+                                    // $('#loading').modal('hide')
+                                    // _this.showmodal('loading', 'hide')
+                                for (var i = 0; i < response.datasingle.length; i++) {
+                                    for (var j = 0; j < response.datasingle[i].length; j++) {
+                                        _this.costbarchart.params.xAxis.data[i].push(response.datasingle[i][j].ProductName)
+                                        _this.costbarchart.params.series[0].data[i].push(response.datasingle[i][j].PurCost)
+                                        _this.costbarchart.params.series[1].data[i].push(response.datasingle[i][j].ListCost)
+                                    }
                                 }
+                                var params = _this.costbarchart.params
+
+                                _this.$refs.costbarchart.show = true
+                                _this.$refs.costbarchart.params = params
+                                _this.$refs.costbarchart.drawChart()
+
+                                _this.$refs.costtable.datas = response.data
+                                _this.$refs.costtable.show = true
+                                _this.$refs.costtable.setTable()
                             }
-                            var params = _this.boxbarchart.params
-
-                            _this.$refs.boxbarchart.show = true
-                            _this.$refs.boxbarchart.params = params
-                            _this.$refs.boxbarchart.drawChart()
-
-                            _this.$refs.boxtable.datas = response.data
-                            _this.$refs.boxtable.show = true
-                            _this.$refs.boxtable.setTable()
                         },
                         error: function(response) {
                             alert(response)
@@ -224,30 +239,30 @@
             },
             drawlinechart: function(data) {
 
-                this.$refs.boxlinechart.show = true
-                this.$refs.boxlinechart.drawChart(data)
+                this.$refs.costlinechart.show = true
+                this.$refs.costlinechart.drawChart(data)
             },
             drawpiechart: function(data) {
 
-                this.$refs.boxpiechart.show = true
-                this.$refs.boxpiechart.drawChart(data)
+                this.$refs.costpiechart.show = true
+                this.$refs.costpiechart.drawChart(data)
             },
             showcalculator: function(data) {
                 this.$refs.calculator.show = true
                 this.$refs.calculator.calculate(data)
             },
             reset: function() {
-                this.boxbarchart.params.xAxis.data = [
+                this.costbarchart.params.xAxis.data = [
                     [],
                     [],
                     []
                 ]
-                this.boxbarchart.params.series[0].data = [
+                this.costbarchart.params.series[0].data = [
                     [],
                     [],
                     []
                 ]
-                this.boxbarchart.params.series[1].data = [
+                this.costbarchart.params.series[1].data = [
                     [],
                     [],
                     []
@@ -255,11 +270,11 @@
             }
         },
         components: {
-            myBoxtable,
-            myBoxbarchart,
-            myBoxlinechart,
-            myBoxpiechart,
-            myBoxcalculator,
+            myCosttable,
+            myCostbarchart,
+            myCostlinechart,
+            myCostpiechart,
+            myCostcalculator,
             myModal
         },
     }

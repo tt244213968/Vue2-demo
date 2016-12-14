@@ -13,6 +13,8 @@ import Login from './components/Login'
 import Wrapper from './components/Wrapper'
 import Costanalyse from './components/Costanalyse'
 import Costmonthly from './components/Costmonthly'
+import Materialprice from './components/Materialprice'
+import Huilv_linechart from './components/Huilv_linechart'
 /* eslint-disable no-new */
 const router = new VueRouter({
     routes: [{
@@ -23,8 +25,10 @@ const router = new VueRouter({
         name: '',
         component: Wrapper,
         children: [
-            { path: '/costanalyse', component: Costanalyse, name: '业务报价' },
+            { path: '/costanalyse', component: Costanalyse, name: '成本查看' },
+            { path: '/materialprice', component: Materialprice, name: '材料价格' },
             { path: '/costmonthly', component: Costmonthly, name: '成本月报' },
+            { path: '/huilv', component: Huilv_linechart, name: '汇率' }
         ]
     }]
 })
@@ -40,12 +44,25 @@ router.afterEach((transition) => {
 })
 const store = new Vuex.Store({
     state: {
-        historyprice: ''
+        cny: false,
+        usd: false
 
     },
     mutations: {
         changehistoryprice(state, data) {
             state.historyprice = data
+        },
+        showcny(state) {
+            state.cny = true
+        },
+        hidecny(state) {
+            state.cny = false
+        },
+        showusd(state) {
+            state.usd = true
+        },
+        hideusd(state) {
+            state.usd = false
         }
     }
 })

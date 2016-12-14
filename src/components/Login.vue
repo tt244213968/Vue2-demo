@@ -10,10 +10,10 @@
                 </div>
                 <div class="form-group">
                 <label>密码</label>
-                    <input v-model="password" type="password" class="form-control span12 form-control">
+                    <input v-model="password" @keyup.enter="login" type="password" class="form-control span12 form-control">
                 </div>
                 
-                <a class="btn btn-success pull-right" @click="login">登录</a>
+                <a class="btn btn-success pull-right" @keyup.enter="login" @click="login">登录</a>
                 <label class="remember-me"><input type="checkbox"> 记住密码</label>
                 <div class="clearfix"></div>
             </form>
@@ -35,29 +35,29 @@
 
                 var _this = this
                 $.ajax({
-                        url: 'http://192.168.1.66:808/api/user/login',
-                        dataType: 'json',
-                        type: 'POST',
-                        data: {
-                            loginname: _this.username,
-                            password: _this.password
-                        },
-                        crossDomain: true,
-                        success: function(response) {
-                            if (response.Table1[0].status == true) {
-                                localStorage.username = response.Table2[0].username
-                                _this.$router.replace('/wrapper')
+                    url: 'http://192.168.1.66:808/api/user/login',
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {
+                        loginname: _this.username,
+                        password: _this.password
+                    },
+                    crossDomain: true,
+                    success: function(response) {
+                        if (response.Table1[0].status == true) {
+                            localStorage.token = response.Table2[0].ftoken
+                            localStorage.userid = response.Table2[0].fidno
+                            localStorage.username = response.Table2[0].username
+                            _this.$router.replace('/wrapper')
 
-                            } else {
-                                alert(response.Table1[0].message)
-                            }
-                        },
-                        error: function(response) {
-                            alert(response)
+                        } else {
+                            alert(response.Table1[0].message)
                         }
-                    })
-                    // this.$router.replace('/main')
-
+                    },
+                    error: function(response) {
+                        alert(response)
+                    }
+                })
             }
         }
     }

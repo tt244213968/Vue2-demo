@@ -215,8 +215,8 @@ a:focus {
     width: 100%;
     top: 0;
     z-index: 1030;
-    background-color: dodgerblue;
-    opacity: 0.6;
+    background-color: #00BFFF;
+    /*opacity: 0.7;*/
 }
 
 .main-header .navbar {
@@ -366,7 +366,7 @@ a:focus {
 
 .content-header {
     position: relative;
-    padding: 15px 15px 0 15px;
+    padding: 15px 15px 15px 15px;
 }
 
 .content-header>h1 {
@@ -1124,7 +1124,7 @@ a:focus {
 .navbar-nav>.notifications-menu>.dropdown-menu,
 .navbar-nav>.messages-menu>.dropdown-menu,
 .navbar-nav>.tasks-menu>.dropdown-menu {
-    width: 280px;
+    /*width: 280px;*/
     padding: 0 0 0 0;
     margin: 0;
     top: 100%;
@@ -1282,9 +1282,9 @@ a:focus {
 .navbar-nav>.user-menu>.dropdown-menu {
     border-top-right-radius: 0;
     border-top-left-radius: 0;
-    padding: 1px 0 0 0;
+    padding: 5px 0 0 0;
     border-top-width: 0;
-    width: 280px;
+    /*width: 280px;*/
 }
 
 .navbar-nav>.user-menu>.dropdown-menu,

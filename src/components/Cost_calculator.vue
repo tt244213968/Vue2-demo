@@ -57,9 +57,16 @@
                     var qty = 0
                     for (var i = 0; i < data.length; i++) {
                         price += data[i].ListPrice * data[i].Quantity
-                        qty += parseInt(data[i].Quantity)
+                            // console.log('第' + i + '个物料总价：' + data[i].ListPrice * data[i].Quantity)
+                            // console.log('第' + i + '个物料单价：' + data[i].ListPrice)
+                            // console.log('第' + i + '个物料数量：' + data[i].Quantity)
+                        qty += parseFloat(data[i].Quantity)
                     }
+
                     this.price = price / qty
+                        // console.log('总价格' + price)
+                        // console.log('总数量' + qty)
+                        // console.log('价格' + this.price)
                     this.$parent.drawpiechart(data)
                 })
             }

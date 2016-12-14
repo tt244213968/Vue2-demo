@@ -31,12 +31,20 @@
                     icon: 'fa fa-dashboard',
                     itemname: '成本管理',
                     lists: [{
-                        listname: '业务报价',
+                        listname: '成本查看',
                         url: '/costanalyse',
+                        isActive_li: false
+                    }, {
+                        listname: '材料价格',
+                        url: '/materialprice',
                         isActive_li: false
                     }, {
                         listname: '成本月报',
                         url: '/costmonthly',
+                        isActive_li: false
+                    }, {
+                        listname: '汇率查看',
+                        url: './huilv',
                         isActive_li: false
                     }],
                     isActive_ul: false
