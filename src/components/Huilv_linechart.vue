@@ -121,7 +121,10 @@
                 crossDomain: true,
                 async: true,
                 success: function(res) {
-                    _this.data = res.data
+                    if (res.code == 1) {
+                        _this.data = res.data
+
+                    }
                 },
                 error: function() {
                     console.log('获取汇率失败')
